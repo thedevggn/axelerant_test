@@ -1,0 +1,37 @@
+<?php
+
+/*
+ * @file
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function axelerant_test_form_system_site_information_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $siteApiKey = \Drupal::config('axelerant_test.configuration')->get('siteapikey');
+  $form['siteapikey'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Site API Key'),
+    '#default_value' => $siteApiKey,
+    '#required' => TRUE,
+  );
+  $form['actions']['submit']['#value'] = t('Update Configuration');
+  $form['#submit'][] = 'axelerant_test_system_site_information_settings_submit';
+}
+
+/**
+ * Custom submit handler to save siteapikey.
+ */
+function axelerant_test_system_site_information_settings_submit(array $form, FormStateInterface $form_state){
+  $siteApiKey = $form_state->getValue('siteapikey');
+  // Save Site Api Key only when set actual key.
+  if ($siteApiKey != 'No API Key yet') {
+    $config = \Drupal::configFactory()->getEditable('axelerant_test.configuration');
+    $config->set('siteapikey', $siteApiKey)->save();
+    \Drupal::messenger()->addMessage(t('Site API Key has been saved with %value.', [
+      '%value' => $siteApiKey,
+    ]));
+  }
+}

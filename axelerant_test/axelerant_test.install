@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the axelerant test module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function axelerant_test_uninstall(){
+    // Remove Site API Key configuration.
+    \Drupal::configFactory()->getEditable('axelerant_test.configuration')->delete();
+}
